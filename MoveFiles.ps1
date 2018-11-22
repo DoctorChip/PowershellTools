@@ -7,7 +7,7 @@
 ## CONFIG    
         
     ## The parent directory to search from
-    $SearchDirectory = "C:\Users\ChrisWalker\Desktop"
+    $SearchDirectory = "C:\"
 
     ## The list of filenames we want to find
     $FileNames = @(
@@ -16,7 +16,7 @@
     )
 
     ## The destination directory
-    $DestDir = "C:\Users\ChrisWalker\Desktop"
+    $DestDir = "D:\"
     $ResultsFolderName = "Results"
 
     ## Remove the old files?
