@@ -7,7 +7,7 @@
 ## CONFIG    
         
     ## The parent directory to search from
-    $SearchDirectory = "C:"
+    $SearchDirectory = "C:\Users\ChrisWalker\Desktop"
 
     ## The list of filenames we want to find
     $FileNames = @(
@@ -16,15 +16,16 @@
     )
 
     ## The destination directory
-    $DestDir = "C:"
+    $DestDir = "C:\Users\ChrisWalker\Desktop"
     $ResultsFolderName = "Results"
 
     ## Remove the old files?
-    $RemoveOldFiles = $FALSE
+    $RemoveOldFiles = $TRUE
 
 
 ## RUN
 
+    Write-Host "---"
     ## Recursively search our target directory for any of our files
     $FoundFiles = @();
     foreach ($search in $FileNames)
@@ -42,7 +43,7 @@
     ## Ensure our results directory can be made, and make it
     if (!(Test-Path ($DestDir + '\' + $ResultsFolderName) -PathType Container))
     {
-        New-Item -ItemType Directory -Force -Path ($DestDir + '\' + $ResultsFolderName)
+        $d = New-Item -ItemType Directory -Force -Path ($DestDir + '\' + $ResultsFolderName)
     }
     else
     {
@@ -53,18 +54,18 @@
     ## Move our files
     foreach ($file in $FoundFiles)
     {
-        Write-host $file.File.Name
+        Write-host "Moving:" $file.File.Name
 
         if(!($file.File.Name -eq $null))
         {
               $newDir = $DestDir + '\' + $ResultsFolderName + '\' + $file.DestName
-              $file.File.CopyTo($newDir)
+              $c = $file.File.CopyTo($newDir)
 
               if (Test-path ($DestDir + '\' + $ResultsFolderName + '\' + $file.DestName))
               {
                   if ($RemoveOldFiles -eq $TRUE)
                   {
-                      Write-host "Removing item: " + $file.File.Name
+                      Write-host "Removing:" $file.File.Name
                       Remove-item ($file.File.FullName)
                   }
               }
@@ -72,4 +73,5 @@
     }
 
     # Fin
-    Write-Host "Finished. :)"
+    Write-Host "---"
+    Write-Host "Finished"
