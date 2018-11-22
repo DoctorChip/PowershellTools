@@ -7,19 +7,20 @@
 ## CONFIG    
         
     ## The parent directory to search from
-    $SearchDirectory = "C:\"
+    $SearchDirectory = "C:\Users\ChrisWalker\Desktop"
 
     ## The list of filenames we want to find
     $FileNames = @(
-        "01.txt",
-        "02.txt"
+        @{Source = "01.txt"; Dest = "03.txt"},
+        @{Source = "02.txt"; Dest = "04.txt"}
     )
 
     ## The destination directory
-    $DestDir = "D:\"
+    $DestDir = "C:\Users\ChrisWalker\Desktop"
+    $ResultsFolderName = "Results"
 
     ## Remove the old files?
-    $RemoveOldFiles = $FALSE
+    $RemoveOldFiles = $TRUE
 
 
 ## RUN
@@ -28,8 +29,8 @@
     $FoundFiles = @();
     foreach ($search in $FileNames)
     {
-        $file = Get-ChildItem -Path $SearchDirectory -Filter $search -Recurse -ErrorAction SilentlyContinue -Force
-        $FoundFiles += $file
+        $file = Get-ChildItem -Path $SearchDirectory -Filter $search.Source -Recurse -ErrorAction SilentlyContinue -Force
+        $FoundFiles += @{ DestName = $search.Dest; File = $file }
     }
 
     ## Bail out if we didnt find any files
@@ -39,9 +40,9 @@
     }
 
     ## Ensure our results directory can be made, and make it
-    if (!(Test-Path ($DestDir + '\' + "RESULTS") -PathType Container))
+    if (!(Test-Path ($DestDir + '\' + $ResultsFolderName) -PathType Container))
     {
-        New-Item -ItemType Directory -Force -Path ($DestDir + '\' + "RESULTS")
+        New-Item -ItemType Directory -Force -Path ($DestDir + '\' + $ResultsFolderName)
     }
     else
     {
@@ -52,19 +53,19 @@
     ## Move our files
     foreach ($file in $FoundFiles)
     {
-        Write-host $file.Name
+        Write-host $file.File.Name
 
-        if(!($file.Name -eq $null))
+        if(!($file.File.Name -eq $null))
         {
-              $newDir = $DestDir + '\' + "RESULTS" + '\' + $file.Name
-              $file.CopyTo($newDir)
+              $newDir = $DestDir + '\' + $ResultsFolderName + '\' + $file.DestName
+              $file.File.CopyTo($newDir)
 
-              if (Test-path ($DestDir + '\' + "RESULTS" + '\' + $file))
+              if (Test-path ($DestDir + '\' + $ResultsFolderName + '\' + $file.DestName))
               {
                   if ($RemoveOldFiles -eq $TRUE)
                   {
-                      Write-host "Removing item: " + $file
-                      Remove-item ($file.FullName)
+                      Write-host "Removing item: " + $file.File.Name
+                      Remove-item ($file.File.FullName)
                   }
               }
           }
